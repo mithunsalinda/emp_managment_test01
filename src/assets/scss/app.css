@@ -1,0 +1,28 @@
+.mrg-right {
+  margin-right: 10px !important;
+}
+
+.MuiDataGrid-cell {
+  outline: none !important;
+}
+
+.custome__style {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.custome__style .custome__style_col {
+  margin: 5px;
+  width: 220px;
+}
+
+.error__message {
+  color: red;
+  font-size: 12px;
+}
+/*# sourceMappingURL=app.css.map */

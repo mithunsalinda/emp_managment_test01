@@ -1,0 +1,21 @@
+.mrg-right {
+    margin-right: 10px !important
+}
+.MuiDataGrid-cell {
+    outline: none !important;
+}
+.custome__style{
+    flex-direction: row;
+    display: flex;
+   // margin: 20px;
+   .custome__style_col {
+    margin: 5px;
+    width: 220px;
+   }
+}
+
+//Error Messages
+.error__message {
+    color:red;
+    font-size:12px
+}
