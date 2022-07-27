@@ -14,6 +14,8 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  background-color: #FFF;
+  padding: 13px;
 }
 
 .custome__style .custome__style_col {
@@ -24,5 +26,37 @@
 .error__message {
   color: red;
   font-size: 12px;
+}
+
+.wrapper {
+  height: 50vh;
+  margin: 5rem;
+  padding: 2rem;
+}
+
+body {
+  background-color: #f2f2f2;
+}
+
+.MuiDataGrid-root {
+  background-color: #FFF;
+  float: right;
+  width: 100%;
+}
+
+.button__panel {
+  float: right;
+  margin-bottom: 10px;
+}
+
+.heading {
+  background-color: #2a787a;
+  padding: 1rem 2rem;
+  margin: 10px 0;
+}
+
+.heading h1 {
+  color: #FFF;
+  font-size: 1.5em;
 }
 /*# sourceMappingURL=app.css.map */

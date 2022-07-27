@@ -7,17 +7,19 @@ import React from 'react'
 **/
 
 export const TextInput = (props) => {
-    const { label, onBlur, onChangeText, error, defauts, defaultVal } = props
+    const { label, onBlur, onChangeText, error, defauts, defaultVal, disabled, } = props
     return (
         <>
-            <TextField error={error ? true : false} id="filled-basic"
+            <TextField error={error ? true : false} id="outlined-multiline-flexible"
                 {...defauts}
                 label={label}
-                variant="filled"
+                //variant="filled"
                 onBlur={onBlur}
                 onChange={onChangeText}
                 helperText={error}
                 defaultValue={defaultVal}
+                disabled={disabled}
+            //hidden={hiddenOnPage}
             />
         </>
     )

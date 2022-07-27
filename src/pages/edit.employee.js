@@ -12,6 +12,8 @@ import { nameFormSchema, } from "../lib/schema";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux';
 import actions from '../redux/action/add.emp.action';
+import Swal from 'sweetalert2';
+import { Header } from '../components/template/header';
 /**
 * @author
 * @function EditEmpDetails
@@ -32,6 +34,7 @@ export const EditEmpDetails = (props) => {
 
     const { register, control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
+            id: `${location.state.rowID.id}`,
             firstName: `${location.state.rowID.firstName}`,
             lastName: `${location.state.rowID.lastName}`,
             email: `${location.state.rowID.email}`,
@@ -43,25 +46,42 @@ export const EditEmpDetails = (props) => {
         resolver: yupResolver(nameFormSchema)
     });
     const onSubmit = (data) => {
-        //console.log(data);
-        setEditedData(data)
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Record has been updated',
+            showConfirmButton: false,
+            timer: 1000
+        })
         dispatch(actions.editEmp(data))
-        // const A2 = Object.assign({}, data);
-        // addEmp.push(Object.assign({}, data))
-        // console.log('A2', A2)
-        // const profile = {
-        //     ...JSON.parse(localStorage.getItem('addNewEmpReducer')),
-        //     ...Object.assign({}, data)
-        // };
-        // localStorage.setItem('addNewEmpReducer', JSON.stringify(profile));
+
     };
 
     return (
-        // <div>EditEmpDetails {location.state.rowID.firstName}</div>
-        <div>
+        <div className='wrapper '>
+            <Header />
             <div className="custome__style">
-
                 <div className="custome__style_col">
+                    <Controller
+                        name="id"
+                        control={control}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                                label='id'
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={location.state.rowID.id}
+                                defaultVal={location.state.rowID.id}
+                                disabled={true}
+                            />
+                        )}
+
+                    />
+                </div>
+            </div>
+            <div className="custome__style">
+                <div className="custome__style_col">
+
                     <Controller
                         name="firstName"
                         control={control}
@@ -165,12 +185,17 @@ export const EditEmpDetails = (props) => {
             </div>
             <div className="custome__style">
                 <div className="custome__style_col">
-                    <InputButton variant="contained" buttonName='Edit' onPress={handleSubmit(onSubmit)} />
+                    <Link to="/employee/list">
+                        <InputButton variant="contained" buttonName='Back' />
+                    </Link>
                 </div>
+                <div className="custome__style_col">
+
+                    <InputButton variant="contained" buttonName='Save' onPress={handleSubmit(onSubmit)} />
+                </div>
+
             </div>
-            <Link to="/employee/list">
-                <InputButton variant="contained" buttonName='Back' />
-            </Link>
+
         </div >
     )
 

@@ -1,7 +1,8 @@
 import actionTypes from "../action/index"
 import createReducer from "../../lib/createReducer";
 const initialState = {
-    empDate: []
+    empDate: [],
+    empId: 0
 }
 
 // const addNewEmpReducer = createReducer(initialState, {
@@ -54,10 +55,12 @@ export const addNewEmpReducer = (
     switch (action.type) {
         case actionTypes.ADD_NEW_EMP:
             return {
+                ...state,
+                empId: 0,
                 empDate: action.payload.empDate
             };
         case actionTypes.DELETE_EMP:
-            return { empDate: action.payload.empDate };
+            return { empDate: action.payload };
         case actionTypes.EDIT_EMP:
             return { empDate: action.payload.empDate }
         default:

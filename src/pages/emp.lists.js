@@ -4,10 +4,9 @@ import { Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputButton } from '../components/inputeFields';
 import { useDispatch, useSelector } from 'react-redux';
-import addNewEmpReducer from '../redux/reducer/add.emp.reducer';
-import addEmpAction from '../redux/action/add.emp.action';
-import action from '../redux/action';
-
+import action from '../redux/action/add.emp.action';
+import Swal from 'sweetalert2'
+import { Header } from '../components/template/header';
 /**
 * @author
 * @function EmployeeList
@@ -19,42 +18,10 @@ export const EmployeeList = (props) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     useEffect(() => {
-        console.log('empDate', empDate);
-        //dispatch(action.loadEmpList(empDate))
-    }, [])
-    // useEffect(() => {
-    //     // const parsedArrayFromLocalStorage = JSON.parse(localStorage.getItem('addNewEmpReducer'));
 
-    //     // const mappedArray = parsedArrayFromLocalStorage.map((item, key) => {
-    //     //     return item;
-
-    //     // }, [items]);
-
-    //     // console.log("log", mappedArray);
-    //     // if (items) {
-    //     //     setItems(items);
-    //     //    }
-    //     // setItems(mappedArray);
-    //     const items = JSON.parse(localStorage.getItem('addNewEmpReducer'));
-    //     console.log(items)
-    //     if (items) {
-    //         setItems(items);
-    //     }
-
-    // }, [])
-
-
-
-    // const rows = empDate?.map((item, index) => ({
-    //     id: index,
-    //     firstName: item.firstName,
-    //     lastName: item.lastName,
-    //     email: item.email,
-    //     phoneNumber: item.phoneNumber,
-    //     gender: item.gender,
-    // }));
+    }, [empDate])
     const rows = empDate.map((item, index) => ({
-        id: index,
+        id: item.id,
         firstName: item.firstName,
         lastName: item.lastName,
         email: item.email,
@@ -62,19 +29,45 @@ export const EmployeeList = (props) => {
         gender: item.gender,
     }));
 
-    const columns = [
+    const tableProps = [{ field: 'id', headerName: 'ID', width: 100 },
+    { field: 'firstName', headerName: 'First name', width: 130 },
+    { field: 'lastName', headerName: 'Last name', width: 130 },
+    { field: 'email', headerName: 'Email', width: 130 },
+    { field: 'phoneNumber', headerName: 'Phone Number', width: 130 },
+    { field: 'gender', headerName: 'Gender', width: 130 }]
 
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'firstName', headerName: 'First name', width: 130 },
-        { field: 'lastName', headerName: 'Last name', width: 130 },
-        { field: 'email', headerName: 'Email', width: 130 },
-        { field: 'phoneNumber', headerName: 'Phone Number', width: 130 },
-        { field: 'gender', headerName: 'Gender', width: 130 },
+    const columns = [
+        ...tableProps
+        ,
         {
-            field: 'action',
+            field: 'editAction',
             headerName: 'Action',
             sortable: false,
-            width: 250,
+            width: 100,
+            renderCell: (params) => {
+                const onClick = (e) => {
+                    e.stopPropagation(); // don't select this row after clicking
+
+                    const api = params.api;
+                    const thisRow = {};
+
+                    api
+                        .getAllColumns()
+                        .filter((c) => c.field !== '__check__' && !!c)
+                        .forEach(
+                            (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
+                        );
+                    return navigate('/employee/edit', { state: { rowID: thisRow } });
+                };
+
+                return <><Button onClick={onClick} className='mrg-right' variant="outlined">Edit</Button></>;
+            },
+
+        }, {
+            field: 'deleteAction',
+            headerName: 'Action',
+            sortable: false,
+            width: 100,
             renderCell: (params) => {
                 const onClick = (e) => {
                     e.stopPropagation(); // don't select this row after clicking
@@ -89,23 +82,53 @@ export const EmployeeList = (props) => {
                             (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
                         );
 
-                    //return alert(JSON.stringify(thisRow, null, 4));
+                    //alert(JSON.stringify(thisRow, null, 4));
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const empListAfterDeleted = empDate.filter(emp => emp.id !== thisRow.id);
+                            console.log(empListAfterDeleted);
+                            dispatch(action.deleteEmp(empListAfterDeleted));
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                        }
+                    })
                     //navigate('/employee/edit',{state:{id:1,name:'sabaoon'}});
 
-                    return navigate('/employee/edit', { state: { rowID: thisRow } });
+                    // return navigate('/employee/edit', { state: { rowID: thisRow } });
                 };
 
-                return <><Button onClick={onClick} className='mrg-right' variant="outlined">Edit</Button><Button onClick={onClick} className='' variant="outlined">Delete</Button></>;
+                return <><Button onClick={onClick} className='mrg-right' variant="outlined">Delete</Button></>;
             },
+
         },
     ];
 
     return (
-        <div style={{ height: '500vh', width: '100%' }}>
-            <Link to="/employee/add">
+        <div className='wrapper'>
+            <Header />
+            <div className='button__panel'><Link to="/employee/add">
                 <InputButton variant="contained" buttonName='Add' />
-            </Link>
-            <DataGrid rows={rows} columns={columns} />
+            </Link></div>
+
+            <div style={{ height: 400, width: '100%', float: 'left' }}>
+                <div style={{ display: 'flex', height: '100%' }}>
+                    <div style={{ flexGrow: 1 }}>
+                        <DataGrid rows={rows} columns={columns} />
+                    </div>
+                </div>
+            </div>
+
         </div>
     )
 

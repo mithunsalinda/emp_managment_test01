@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { TextInput, InputButton } from '../components/inputeFields/'
 import { Button } from '@mui/material'
@@ -12,6 +12,8 @@ import { nameFormSchema, } from "../lib/schema";
 import { yupResolver } from '@hookform/resolvers/yup';
 import actions from '../redux/action/add.emp.action';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2'
+import { Header } from '../components/template/header';
 /**
 * @author
 * @function AddNewEmployee
@@ -19,7 +21,17 @@ import { Link } from 'react-router-dom';
 
 export const AddNewEmployee = (props) => {
     const dispatch = useDispatch();
-    const [addEmp, setAddEmp] = useState([]);
+    const { empId, } = useSelector((state) => state.addNewEmpReducer)
+    const [empID, setEmpID] = useState(0);
+
+
+    useEffect(() => {
+        getLocalStorageArray()
+    }, [empID])
+
+    const getLocalStorageArray = () => {
+        return Math.floor(Date.now() / 1000)
+    }
 
     // const {
     //     firstName,
@@ -31,36 +43,57 @@ export const AddNewEmployee = (props) => {
 
     const { register, control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
-            firstName: 'Mithunwewe',
-            lastName: 'Jayanwewe',
-            email: 'mithun@sds.lk',
-            phoneNumber: '+6582858586',
-            gender: 'female'
+            id: `${getLocalStorageArray}`,
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+            gender: ''
 
         },
         resolver: yupResolver(nameFormSchema)
     });
     const onSubmit = (data) => {
-        // dispatch(actions.addNewEmp({ type: 'firstName', firstName: data.firstName }))
-        // dispatch(actions.addNewEmp({ type: 'lastName', lastName: data.lastName }))
-        // dispatch(actions.addNewEmp({ type: 'email', email: data.email }))
-        // dispatch(actions.addNewEmp({ type: 'phoneNumber', phoneNumber: data.phoneNumber }))
-        // dispatch(actions.addNewEmp({ type: 'gender', gender: data.gender }))
-        //localStorage.setItem("addNewEmpReducer", JSON.stringify(addEmp));
+        console.log("object", typeof (data));
+        data.id = getLocalStorageArray();
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Employee has been added',
+            showConfirmButton: false,
+            timer: 1000
+        })
         dispatch(actions.addNewEmp(data))
-        // addEmp.push(data)
-        // const profile = {
-        //     //...JSON.parse(localStorage.getItem('addNewEmpReducer')),
-        //     addEmp
-        // };
-        //localStorage.setItem('addNewEmpReducer', JSON.stringify(addEmp));
     };
     return (
 
-        <div>
+        <div className='wrapper '>
+            <Header />
             <div className="custome__style">
-
                 <div className="custome__style_col">
+                    <Controller
+                        name="ID"
+                        control={control}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                                id="outlined-multiline-flexible"
+                                maxRows={4}
+                                label='ID'
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                defaultVal={getLocalStorageArray()}
+                                disabled={true}
+                            //hiddenOnPage={true}
+                            />
+                        )}
+
+                    />
+                </div>
+            </div>
+            <div className="custome__style">
+                <div className="custome__style_col">
+
                     <Controller
                         name="firstName"
                         control={control}
@@ -159,12 +192,17 @@ export const AddNewEmployee = (props) => {
             </div>
             <div className="custome__style">
                 <div className="custome__style_col">
+
+                    <Link to="/employee/list">
+                        <InputButton variant="contained" buttonName='Back' />
+                    </Link>
+                </div>
+                <div className="custome__style_col">
                     <InputButton variant="contained" buttonName='Save' onPress={handleSubmit(onSubmit)} />
                 </div>
-            </div>
-            <Link to="/employee/list">
-                <InputButton variant="contained" buttonName='Back' />
-            </Link>
+
+            </div >
+
         </div >
 
     )
